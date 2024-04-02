@@ -18,9 +18,9 @@ class CachedReverseLookup:
     # convert an IP address to a host by either using the cache or
     # doing a lookup and adding it to the cache
     def lookup(self, ip_address: str) -> str:
-        if (ip_address in self.cache):
+        if ip_address in self.cache:
             return self.cache[ip_address]
-        if (self.resovler_count < 10):
+        if self.resovler_count < 10:
             self.resovler_count += 1
             try:
                 host = socket.gethostbyaddr(ip_address)
