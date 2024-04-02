@@ -20,7 +20,7 @@ def read_ipfw_state() -> list:
 
 def main(stdscr, *args):
     cache = CachedReverseLookup()
-    count = 1
+    stdscr.timeout(5)
     while True:
         results = read_ipfw_state()
 
@@ -58,10 +58,11 @@ def main(stdscr, *args):
             stdscr.addstr(screen_line, curses.COLS - 12, result.get_readable_bytes(6))
         stdscr.hline(1, 0, '=', curses.COLS)
         stdscr.refresh()
-        time.sleep(2)
-        count = +1
-        if count > 100:
-            return
+        for tick in range(0, 2000):
+            time.sleep(0.0001)
+            key = stdscr.getch()
+            if key == ord('q') or key == ord('Q'):
+                return
 
 
 curses.wrapper(main)
