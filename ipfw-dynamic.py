@@ -12,9 +12,9 @@ def read_ipfw_state(file: str) -> list:
     with open(file) as rules:
         for line in rules:
             r = Rule(line)
-            if (r.valid):
+            if r.valid:
                 results.append(r)
-    return(results)
+    return results
 
 
 def main(stdscr, *args):
