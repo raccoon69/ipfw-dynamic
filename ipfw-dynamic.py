@@ -1,10 +1,9 @@
-from rule import Rule
-from cachedreverselookup import CachedReverseLookup
 import socket
-from _operator import attrgetter
 import curses
 from curses import wrapper
-# from pip._vendor.rich import screen
+from _operator import attrgetter
+from rule import Rule
+from cachedreverselookup import CachedReverseLookup
 
 
 def read_ipfw_state(file: str) -> list:
@@ -12,7 +11,7 @@ def read_ipfw_state(file: str) -> list:
     with open(file) as rules:
         for line in rules:
             r = Rule(line)
-            if r.valid:
+            if r._valid:
                 results.append(r)
     return results
 
@@ -25,21 +24,19 @@ def main(stdscr, *args):
         results = read_ipfw_state(filename)
 
         # sort the results
-        results.sort(key=attrgetter('bytes'), reverse=True)
+        results.sort(key=attrgetter('_bytes'), reverse=True)
 
         for result in results:
             try:
-                result.src_port = socket.getservbyport(int(result.src_port_number), result.protocol)
+                result._src_port = socket.getservbyport(int(result._src_port_number), result._protocol)
             except:
                 pass
             try:
-                result.dest_port = socket.getservbyport(int(result.dest_port_number), result.protocol)
+                result._dest_port = socket.getservbyport(int(result._dest_port_number), result._protocol)
             except:
                 pass
-            result.src_name = cache.lookup(result.src_ip)
-            result.dest_name = cache.lookup(result.dest_ip)
-
-        results.sort(key=attrgetter('bytes'), reverse=True)
+            result._src_name = cache.lookup(result._src_ip)
+            result._dest_name = cache.lookup(result._dest_ip)
 
         stdscr.erase()
         divider = '=' * curses.COLS
@@ -53,10 +50,10 @@ def main(stdscr, *args):
             stdscr.addstr(0, curses.COLS - 25, 'Protocol')
             stdscr.addstr(0, curses.COLS - 12, 'Size')
             result = results[screen_line - 2]
-            stdscr.addstr(screen_line, 0, result.rule_no)
-            stdscr.addstr(screen_line, 8, result.get_limited_host_and_port(result.src_name, result.src_port, ip_width))
-            stdscr.addstr(screen_line, ip_width + 1 + 8, result.get_limited_host_and_port(result.dest_name, result.dest_port, ip_width))
-            stdscr.addstr(screen_line, curses.COLS - 25, result.protocol)
+            stdscr.addstr(screen_line, 0, result._rule_no)
+            stdscr.addstr(screen_line, 8, result.get_limited_host_and_port(result._src_name, result._src_port, ip_width))
+            stdscr.addstr(screen_line, ip_width + 1 + 8, result.get_limited_host_and_port(result._dest_name, result._dest_port, ip_width))
+            stdscr.addstr(screen_line, curses.COLS - 25, result._protocol)
             stdscr.addstr(screen_line, curses.COLS - 12, result.get_readable_bytes())
         stdscr.refresh()
         stdscr.getch()
