@@ -1,5 +1,5 @@
 import re
-from humanbytes import HumanBytes
+from typing import List
 
 
 class Rule:
@@ -18,6 +18,7 @@ class Rule:
     _dest_port_number = 0
     _flow = ''
     _valid = False
+    METRIC_LABELS: List[str] = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
 
     def __init__(self, line: str='') -> None:
         #
@@ -48,8 +49,20 @@ class Rule:
 
             self._valid = True
 
-    def get_readable_bytes(self) -> str:
-        return HumanBytes.format(self._bytes, metric=True, precision=0)
+    def get_readable_bytes(self, max_len: int=-1) -> str:
+        # Raw data in bytes
+        result = f'{self._bytes}'
+        if max_len == -1 or len(result) < max_len:
+            return result
+        divisions = 0
+        num = self._bytes
+        while divisions < len(Rule.METRIC_LABELS):
+            num = int(num / 1024)
+            divisions += 1
+            result = f'{num}' + Rule.METRIC_LABELS[divisions]
+            if len(result) <= max_len:
+                return result
+        return result
 
     def get_limited_host_and_port(self, host: str, port: int, max_len: int=-1) -> str:
         # max_len of -1 is for no limit on the length

@@ -1,3 +1,5 @@
+import subprocess
+import time
 import socket
 import curses
 from curses import wrapper
@@ -6,13 +8,13 @@ from rule import Rule
 from cachedreverselookup import CachedReverseLookup
 
 
-def read_ipfw_state(file: str) -> list:
+def read_ipfw_state() -> list:
     results = []
-    with open(file) as rules:
-        for line in rules:
-            r = Rule(line)
-            if r._valid:
-                results.append(r)
+    ipfw_out = subprocess.run(['/sbin/ipfw', '-D', 'show'], capture_output=True, text=True)
+    for line in ipfw_out.stdout.splitlines():
+        r = Rule(line)
+        if r._valid:
+            results.append(r)
     return results
 
 
@@ -20,8 +22,7 @@ def main(stdscr, *args):
     cache = CachedReverseLookup()
     count = 1
     while True:
-        filename = 'ipfw-show{}.txt'.format(count)
-        results = read_ipfw_state(filename)
+        results = read_ipfw_state()
 
         # sort the results
         results.sort(key=attrgetter('_bytes'), reverse=True)
@@ -54,11 +55,11 @@ def main(stdscr, *args):
             stdscr.addstr(screen_line, 8, result.get_limited_host_and_port(result._src_name, result._src_port, ip_width))
             stdscr.addstr(screen_line, ip_width + 1 + 8, result.get_limited_host_and_port(result._dest_name, result._dest_port, ip_width))
             stdscr.addstr(screen_line, curses.COLS - 25, result._protocol)
-            stdscr.addstr(screen_line, curses.COLS - 12, result.get_readable_bytes())
+            stdscr.addstr(screen_line, curses.COLS - 12, result.get_readable_bytes(6))
         stdscr.refresh()
-        stdscr.getch()
-        count += 1
-        if count > 3:
+        time.sleep(2)
+        count =+ 1
+        if count > 100:
             return
 
 
