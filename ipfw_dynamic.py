@@ -58,7 +58,7 @@ def main(stdscr, *args):
             stdscr.addstr(screen_line, curses.COLS - 12, result.get_readable_bytes(6))
         stdscr.hline(1, 0, '=', curses.COLS)
         stdscr.refresh()
-        for tick in range(0, 2000):
+        for _ in range(0, 2000):
             time.sleep(0.0001)
             key = stdscr.getch()
             if key == ord('q') or key == ord('Q'):

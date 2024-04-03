@@ -40,11 +40,11 @@ class Rules:
         self._line = re.sub("[\s]+", ' ', line.rstrip())
 
         if 'STATE' in self._line:
-            packets = state = arrows = 0
+            packets = 0
 
             #
             # state is a local variable because we don't need it
-            self._rule_no, packets, rule_bytes, self._ttl, state, self._protocol, self._src_ip, self._src_port, arrows, self._dest_ip, self._dest_port, self._flow = self._line.split(' ')
+            self._rule_no, packets, rule_bytes, self._ttl, _, self._protocol, self._src_ip, self._src_port, _, self._dest_ip, self._dest_port, self._flow = self._line.split(' ')
 
             #
             # By default make the port number and name the same
