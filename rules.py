@@ -2,7 +2,10 @@ import re
 from typing import List
 
 
-class Rule:
+class Rules:
+    '''
+    Store all the elements of a reported dynamic ipfw rule with "ipfw -D show"
+    '''
     _rule_no = 0
     _packets = 0
     _bytes = 0
@@ -21,32 +24,49 @@ class Rule:
     METRIC_LABELS: List[str] = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
 
     def __init__(self, line: str='') -> None:
-        #
-        # 16700      32     10211 (90s) STATE tcp 192.168.128.112 56187 <-> 192.40.81.4 443 :default
-        #
+        '''
+        Intialize and parse a string into its parts
+        
+        Example string:
+         16700      32     10211 (90s) STATE tcp 192.168.128.112 56187 <-> 192.40.81.4 443 :default
+        '''
 
         #
-        # Start with only one space between each field
-        self._line = re.sub("[\s]+", ' ', line.rstrip())
+        # Start with default of being not a valid rule
         self._valid = False
+
+        #
+        # Compress only one space between each field
+        self._line = re.sub("[\s]+", ' ', line.rstrip())
 
         if 'STATE' in self._line:
             packets = state = arrows = 0
+
+            #
             # state is a local variable because we don't need it
             self._rule_no, packets, rule_bytes, self._ttl, state, self._protocol, self._src_ip, self._src_port, arrows, self._dest_ip, self._dest_port, self._flow = self._line.split(' ')
 
+            #
+            # By default make the port number and name the same
             self._src_port_number = self._src_port
             self._dest_port_number = self._dest_port
 
+            #
+            # By default make the address number and host name the same
             self._src_name = self._src_ip
             self._dest_name = self._dest_ip
 
-            # clean up ttl to be ust a number
+            #
+            # Clean up ttl to be ust a number
             self._ttl = re.sub('[s()]', '', self._ttl)
 
+            #
+            # Convert to integers
             self._packets = int(packets)
             self._bytes = int(rule_bytes)
 
+            #
+            # And mark as valid
             self._valid = True
 
     def get_readable_bytes(self, max_len: int=-1) -> str:
@@ -56,10 +76,10 @@ class Rule:
             return result
         divisions = 0
         num = self._bytes
-        while divisions < len(Rule.METRIC_LABELS):
+        while divisions < len(Rules.METRIC_LABELS):
             num = int(num / 1024)
             divisions += 1
-            result = f'{num}' + Rule.METRIC_LABELS[divisions]
+            result = f'{num}' + Rules.METRIC_LABELS[divisions]
             if len(result) <= max_len:
                 return result
         return result
