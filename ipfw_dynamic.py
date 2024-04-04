@@ -51,7 +51,7 @@ def main(stdscr, *args):
             if screen_line - 2 >= len(results):
                 break
             result = results[screen_line - 2]
-            stdscr.addstr(screen_line, 0, result._rules_no)
+            stdscr.addstr(screen_line, 0, result._rule_no)
             stdscr.addstr(screen_line, 8, result.get_limited_host_and_port(result._src_name, result._src_port, ip_width))
             stdscr.addstr(screen_line, ip_width + 1 + 8, result.get_limited_host_and_port(result._dest_name, result._dest_port, ip_width))
             stdscr.addstr(screen_line, curses.COLS - 25, result._protocol)
