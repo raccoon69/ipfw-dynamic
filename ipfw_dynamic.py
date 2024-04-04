@@ -22,6 +22,8 @@ def main(stdscr, *args):
     cache = CachedReverseLookup()
     stdscr.timeout(5)
     while True:
+        # Reset the counter to allow a few more lookups
+        cache.reset_count()
         results = read_ipfw_state()
 
         # sort the results
