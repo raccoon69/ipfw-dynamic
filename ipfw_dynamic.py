@@ -67,15 +67,15 @@ def main(stdscr, *args):
             if key == ord('q') or key == ord('Q'):
                 return
 
-            # Check if screen was re-sized (True or False)
-            resize = curses.is_term_resized(curr_y, curr_x)
-    
-            # Action in loop if resize is True:
-            if resize is True:
-                curr_y, curr_x = stdscr.getmaxyx()
-                stdscr.clear()
-                curses.resizeterm(curr_y, curr_x)
-                stdscr.refresh()
+        # Check if screen was re-sized (True or False)
+        resize = curses.is_term_resized(curr_y, curr_x)
+
+        # Action in loop if resize is True:
+        if resize is True:
+            curr_y, curr_x = stdscr.getmaxyx()
+            stdscr.clear()
+            curses.resizeterm(curr_y, curr_x)
+            stdscr.refresh()
 
 
 curses.wrapper(main)
