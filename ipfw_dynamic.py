@@ -65,7 +65,7 @@ def main(stdscr, *args):
         stdscr.hline(1, 0, '=', curses.COLS)
         stdscr.refresh()
         for _ in range(0, 2000):
-            time.sleep(0.0001)
+            time.sleep(0.001)
             key = stdscr.getch()
             if key == ord('q') or key == ord('Q'):
                 done = True
