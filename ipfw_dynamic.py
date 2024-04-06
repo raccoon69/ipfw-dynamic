@@ -21,6 +21,8 @@ def read_ipfw_state() -> list:
 def main(stdscr, *args):
     cache = CachedReverseLookup()
     stdscr.timeout(5)
+    curses.start_color()
+    curses.use_default_colors()
     curr_y, curr_x = stdscr.getmaxyx()
     while True:
         # Reset the counter to allow a few more lookups
