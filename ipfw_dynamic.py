@@ -21,6 +21,7 @@ def read_ipfw_state() -> list:
 def main(stdscr, *args):
     cache = CachedReverseLookup()
     stdscr.timeout(5)
+    curr_y, curr_x = stdscr.getmaxyx()
     while True:
         # Reset the counter to allow a few more lookups
         cache.reset_count()
@@ -65,6 +66,16 @@ def main(stdscr, *args):
             key = stdscr.getch()
             if key == ord('q') or key == ord('Q'):
                 return
+
+            # Check if screen was re-sized (True or False)
+            resize = curses.is_term_resized(curr_y, curr_x)
+    
+            # Action in loop if resize is True:
+            if resize is True:
+                curr_y, curr_x = stdscr.getmaxyx()
+                stdscr.clear()
+                curses.resizeterm(curr_y, curr_x)
+                stdscr.refresh()
 
 
 curses.wrapper(main)
