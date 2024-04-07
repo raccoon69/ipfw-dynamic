@@ -79,11 +79,8 @@ def main(stdscr, *args):
             stdscr.clear()
             curses.resizeterm(curr_y, curr_x)
             stdscr.refresh()
-            
-    # Clear the screen before exiting
-    stdscr.clear()
-    stdscr.erase()
-    stdscr.refresh()
 
 
-curses.wrapper(main)
+if __name__ == "__main__":
+    curses.wrapper(main)
+    print('\n')
